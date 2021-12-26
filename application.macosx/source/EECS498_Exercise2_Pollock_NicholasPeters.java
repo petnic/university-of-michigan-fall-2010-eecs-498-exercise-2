@@ -1,3 +1,22 @@
+import processing.core.*; 
+import processing.xml.*; 
+
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
+
+public class EECS498_Exercise2_Pollock_NicholasPeters extends PApplet {
+
 //Nicholas Peters
 //EECS 498-007 F10
 //September 21st, 2010
@@ -9,7 +28,7 @@ float rotation = TWO_PI / segments / 2;
 float radius;
 float segmentWidth;
 float interval = TWO_PI / segments;
-color wheelStroke = color(75);
+int wheelStroke = color(75);
 float wheelStrokeWeight = 3;
 
 //Grayscale Wheel Constants
@@ -23,19 +42,19 @@ float colorY = 600;
 //Pen Variables
 float penX = 360;
 float penY = 600;
-color penColor = color(255);
+int penColor = color(255);
 int penFlag = 0;
 
 //Other Constants
 int type = 1;
 int weight = 1;
-color helpStroke = color(55);
+int helpStroke = color(55);
 
-void setup() {
+public void setup() {
   drawWindow();
 }
 
-void drawWindow() {
+public void drawWindow() {
   //Window
   size(720, 800); 
   background(255);
@@ -44,7 +63,7 @@ void drawWindow() {
   drawInterface();
 }
 
-void drawInterface() {
+public void drawInterface() {
   
   //Toolbar
   noStroke();
@@ -86,7 +105,30 @@ void drawInterface() {
     ellipseMode(RADIUS);
     noStroke();
     drawColorWheel();
+
+  //Font
+  PFont font;
   
+  //Text
+  String help;
+  font = createFont("Arial", 11);
+  textFont(font);
+    
+  help = "1: Pen | 2: Variable Pen | 3: Variable Rectangle | 4: Variable Rectable w/ Stroke | 5: Variable Ellipse | 6: Variable Ellipse w/ Stroke";
+  fill(helpStroke);
+  textAlign(CENTER);
+  text(help, 0, 740, 690, 15);
+  
+  help = "+: Increase Weight | -: Decrease Weight | DELETE: Reset Window | RETURN: Save Window (as window.png)";
+  fill(helpStroke);
+  textAlign(CENTER);
+  text(help, 0, 755, 690, 15);
+    
+  help = "Nicholas Peters | EECS 498-007 F10 | September 21st, 2010";
+  fill(helpStroke);
+  textAlign(CENTER);
+  text(help, 0, 780, 690, 15);
+    
   //Pen Wheel
   radius = 110;
   
@@ -97,30 +139,18 @@ void drawInterface() {
   fill(penColor);
   ellipse(penX, penY, 55, 55);
   
-  //Text
-    String help;
-  
-    PFont font;
-    font = createFont("Helvetica", 12);
-    textFont(font);
+  String display;
+  font = createFont("Arial", 32);
+  textFont(font);
     
-    help = "1: Pen | 2: Var. Pen | 3: Var. Rectangle | 4: Var. Rectable w/ Stroke | 5: Var. Ellipse | 6: Var. Ellipse w/ Stroke";
-    fill(helpStroke);
-    textAlign(CENTER);
-    text(help, 0, 740, 690, 15);
-  
-    help = "+: Increase Pen | -: Decrease Pen | DELETE: Erase Window | RETURN: Save Window (as window.png)";
-    fill(helpStroke);
-    textAlign(CENTER);
-    text(help, 0, 755, 690, 15);
+  display = "Weight: "+weight;
+  fill(helpStroke);
+  textAlign(CENTER);
+  text(display, 235, 490, 250, 50);
     
-    help = "Nicholas Peters | EECS 498-007 F10 | September 21st, 2010";
-    fill(helpStroke);
-    textAlign(CENTER);
-    text(help, 0, 785, 690, 15);
 }
 
-void draw() {  
+public void draw() {  
   //Radius
   radius = 110;
   
@@ -165,16 +195,27 @@ void draw() {
   if(keyPressed) {
     if(key == BACKSPACE || key == DELETE) {
       drawWindow();
+      penColor = color(255);
+      weight = 1;
+      
     }
     if(key == ENTER || key == RETURN) {
       save("window.png");
     }
     if(key == '+' || key == '=') {
-      weight += 1; 
+      if(weight < 50) {
+        weight += 1; 
+      }
+      else {
+        weight = 50; 
+      }
     }
     if(key == '-' || key == '_') {
       if(weight > 1) {
         weight -= 1;
+      }
+      else {
+        weight = 1; 
       }
     }
     if(key == '1') {
@@ -200,46 +241,9 @@ void draw() {
   drawInterface();
 }
 
-
-
-
-void mouseReleased() {
-  penFlag = 0;
-}
-
-
-
-
-
-
-void drawColorWheel() {
+public void drawGrayscaleWheel() {
   for (int i = 0; i < steps; i++) {
-    color[] columns = { 
-      color(255-(255/steps)*i, 255-(255/steps)*i, 0), 
-      color(255-(255/steps)*i, (255/1.5)-((255/1.5)/steps)*i, 0), 
-      color(255-(255/steps)*i, (255/2)-((255/2)/steps)*i, 0), 
-      color(255-(255/steps)*i, (255/2.5)-((255/2.5)/steps)*i, 0), 
-      color(255-(255/steps)*i, 0, 0), 
-      color(255-(255/steps)*i, 0, (255/2)-((255/2)/steps)*i), 
-      color(255-(255/steps)*i, 0, 255-(255/steps)*i), 
-      color((255/2)-((255/2)/steps)*i, 0, 255-(255/steps)*i), 
-      color(0, 0, 255-(255/steps)*i),
-      color(0, 255-(255/steps)*i, (255/2.5)-((255/2.5)/steps)*i), 
-      color(0, 255-(255/steps)*i, 0), 
-      color((255/2)-((255/2)/steps)*i, 255-(255/steps)*i, 0) 
-    };
-    for (int j = 0; j < segments; j++) {
-      fill(columns[j]);
-      arc(colorX, colorY, radius, radius, 
-          interval*j+rotation, interval*(j+1)+rotation);
-    }
-    radius -= segmentWidth;
-  }
-}
-
-void drawGrayscaleWheel() {
-  for (int i = 0; i < steps; i++) {
-    color[] columns = { 
+    int[] columns = { 
       color(255-(255/steps)*i),
       color(255-(255/steps)*i),
       color(255-(255/steps)*i),
@@ -262,52 +266,32 @@ void drawGrayscaleWheel() {
   }
 }
 
-void invariableLine(int x, int y, int px, int py) 
-{
-  float speed = abs(x-px) + abs(y-py);
-  stroke(penColor);
-  strokeWeight(weight);
-  line(x, y, px, py);
-}
-void variableLine(int x, int y, int px, int py) 
-{
-  float speed = abs(x-px) + abs(y-py);
-  stroke(penColor);
-  strokeWeight(speed);
-  line(x, y, px+weight, py+weight);
-}
-void variableRect(int x, int y, int px, int py) 
-{
-  float speed = abs(x-px) + abs(y-py);
-  noStroke();
-  fill(penColor);
-  rect(x, y, speed+weight, speed+weight);
-}
-void variableRectWithStroke(int x, int y, int px, int py) 
-{
-  float speed = abs(x-px) + abs(y-py);
-  stroke(color(255));
-  strokeWeight(1);
-  fill(penColor);
-  rect(x, y, speed+weight, speed+weight);
-}
-void variableEllipse(int x, int y, int px, int py) 
-{
-  float speed = abs(x-px) + abs(y-py);
-  noStroke();
-  fill(penColor);
-  ellipse(x, y, speed+weight, speed+weight);
-}
-void variableEllipseWithStroke(int x, int y, int px, int py) 
-{
-  float speed = abs(x-px) + abs(y-py);
-  stroke(color(255));
-  strokeWeight(1);
-  fill(penColor);
-  ellipse(x, y, speed+weight, speed+weight);
+public void drawColorWheel() {
+  for (int i = 0; i < steps; i++) {
+    int[] columns = { 
+      color(255-(255/steps)*i, 255-(255/steps)*i, 0), 
+      color(255-(255/steps)*i, (255/1.5f)-((255/1.5f)/steps)*i, 0), 
+      color(255-(255/steps)*i, (255/2)-((255/2)/steps)*i, 0), 
+      color(255-(255/steps)*i, (255/2.5f)-((255/2.5f)/steps)*i, 0), 
+      color(255-(255/steps)*i, 0, 0), 
+      color(255-(255/steps)*i, 0, (255/2)-((255/2)/steps)*i), 
+      color(255-(255/steps)*i, 0, 255-(255/steps)*i), 
+      color((255/2)-((255/2)/steps)*i, 0, 255-(255/steps)*i), 
+      color(0, 0, 255-(255/steps)*i),
+      color(0, 255-(255/steps)*i, (255/2.5f)-((255/2.5f)/steps)*i), 
+      color(0, 255-(255/steps)*i, 0), 
+      color((255/2)-((255/2)/steps)*i, 255-(255/steps)*i, 0) 
+    };
+    for (int j = 0; j < segments; j++) {
+      fill(columns[j]);
+      arc(colorX, colorY, radius, radius, 
+          interval*j+rotation, interval*(j+1)+rotation);
+    }
+    radius -= segmentWidth;
+  }
 }
 
-boolean overWheel(float wheelX, float wheelY, float wheelRadius) {
+public boolean overWheel(float wheelX, float wheelY, float wheelRadius) {
   float distanceX = wheelX - mouseX;
   float distanceY = wheelY - mouseY;
   if(sqrt(sq(distanceX) + sq(distanceY)) < wheelRadius) {
@@ -318,4 +302,56 @@ boolean overWheel(float wheelX, float wheelY, float wheelRadius) {
   }
 }
 
+public void invariableLine(int x, int y, int px, int py) {
+  float speed = abs(x-px) + abs(y-py);
+  stroke(penColor);
+  strokeWeight(weight);
+  line(x, y, px, py);
+}
 
+public void variableLine(int x, int y, int px, int py) {
+  float speed = abs(x-px) + abs(y-py);
+  stroke(penColor);
+  strokeWeight(speed);
+  line(x, y, px+weight, py+weight);
+}
+
+public void variableRect(int x, int y, int px, int py) {
+  float speed = abs(x-px) + abs(y-py);
+  noStroke();
+  fill(penColor);
+  rect(x, y, speed+weight, speed+weight);
+}
+
+public void variableRectWithStroke(int x, int y, int px, int py) {
+  float speed = abs(x-px) + abs(y-py);
+  stroke(color(255));
+  strokeWeight(1);
+  fill(penColor);
+  rect(x, y, speed+weight, speed+weight);
+}
+
+public void variableEllipse(int x, int y, int px, int py) {
+  float speed = abs(x-px) + abs(y-py);
+  noStroke();
+  fill(penColor);
+  ellipse(x, y, speed+weight, speed+weight);
+}
+
+public void variableEllipseWithStroke(int x, int y, int px, int py) {
+  float speed = abs(x-px) + abs(y-py);
+  stroke(color(255));
+  strokeWeight(1);
+  fill(penColor);
+  ellipse(x, y, speed+weight, speed+weight);
+}
+
+public void mouseReleased() {
+  penFlag = 0;
+}
+
+
+  static public void main(String args[]) {
+    PApplet.main(new String[] { "--bgcolor=#F0F0F0", "EECS498_Exercise2_Pollock_NicholasPeters" });
+  }
+}

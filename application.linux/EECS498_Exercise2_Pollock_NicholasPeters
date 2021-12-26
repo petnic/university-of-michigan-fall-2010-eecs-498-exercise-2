@@ -1,0 +1,4 @@
+#!/bin/sh
+
+APPDIR=$(dirname "$0")
+java  -Djava.library.path="$APPDIR" -cp "$APPDIR/lib/EECS498_Exercise2_Pollock_NicholasPeters.jar:$APPDIR/lib/core.jar" EECS498_Exercise2_Pollock_NicholasPeters

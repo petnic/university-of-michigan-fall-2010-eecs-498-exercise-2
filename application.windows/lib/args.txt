@@ -1,0 +1,3 @@
+
+EECS498_Exercise2_Pollock_NicholasPeters
+EECS498_Exercise2_Pollock_NicholasPeters.jar,core.jar
